@@ -89,9 +89,17 @@ public class BinaryTree<T extends Comparable<T>> {
 		BinaryTree<T> parent = new BinaryTree<>();
 		
 		if (this.root.equals(node)) {
+			parent = null;
+		}
+		else if (this.leftSubtree.root.equals(node) || this.rightSubtree.root.equals(node)) {
 			parent = this;
 		}
-		else if (this.leftSubtree.root.equals(parent))
+		else if (node.compareTo(this.leftSubtree.root) < 0) {
+			parent = this.leftSubtree.nodeParent(node);
+		}
+		else if (node.compareTo(this.rightSubtree.root) > 0) {
+			parent = this.rightSubtree.nodeParent(node);
+		}
 		
 		return parent;
 	}
