@@ -19,7 +19,8 @@ public class RedBlackTree {
 		System.out.println("search node: " + bt.searchNode(5).root());
 		bt.nodeParent(10);
 		System.out.println("node parent of: " + bt.nodeParent(10).root());
-		System.out.println(bt.treeToString(bt));//test
+		bt.delete(6);
+		System.out.println(bt.treeToString(bt));
 	}
 
 }
