@@ -1,4 +1,3 @@
-
 public class BinaryTree<T extends Comparable<T>> {
 	private T root;
 	private String color;
@@ -32,7 +31,7 @@ public class BinaryTree<T extends Comparable<T>> {
 			}
 			// Left subtree exists; keep going down the tree
 			else if (this.leftSubtree != null) {
-				insert(leftSubtree, node);
+				insert(tree.leftSubtree, node);
 			}
 			
 		}
@@ -46,7 +45,7 @@ public class BinaryTree<T extends Comparable<T>> {
 			}
 			// Right subtree exists; keep going down the tree
 			else if (tree.rightSubtree != null) {
-				insert(rightSubtree, node);
+				insert(tree.rightSubtree, node);
 			}
 		}
 	}
@@ -56,7 +55,7 @@ public class BinaryTree<T extends Comparable<T>> {
 	 * @param tree
 	 * @param node
 	 */
-	public BinaryTree<T> delete(T node) {
+	public void delete(T node) {
 		/*
 		 * Case 1: node to delete is a leaf
 		 * Case 2: node to delete has a single child
@@ -68,97 +67,50 @@ public class BinaryTree<T extends Comparable<T>> {
 		BinaryTree<T> leftCurrentNode = this.leftSubtree;
 		BinaryTree<T> rightCurrentNode = this.rightSubtree;
 		
-		if (leftCurrentNode.root.equals(node) && leftCurrentNode.leftSubtree.equals(null) && rightCurrentNode.rightSubtree.equals(null)) {
-			this.leftSubtree = null;
+		if (this.root.equals(node)) {
+			// Case 1: Node is leaf
+			if (leftCurrentNode == null && rightCurrentNode == null) {
+				// Reset
+				this.root = null;
+				this.color = "black";
+				this.leftSubtree = null;
+				this.rightSubtree = null;
+			}
+			// Case 2: Node has a single child on the left
+			else if (rightCurrentNode == null) {
+				this.root = leftCurrentNode.root;
+				this.color = leftCurrentNode.color;
+				this.leftSubtree = leftCurrentNode.leftSubtree;
+				this.rightSubtree = leftCurrentNode.rightSubtree;
+			}
+			// 2A: Node has a single child on the right
+			else if (leftCurrentNode == null) {
+				this.root = rightCurrentNode.root;
+				this.color = rightCurrentNode.color;
+				this.leftSubtree = rightCurrentNode.leftSubtree;
+				this.rightSubtree = rightCurrentNode.rightSubtree;
+			}
+			// Case 3: Node has two children
+			else if (!(leftCurrentNode == null && rightCurrentNode == null)) {
+				BinaryTree<T> maxNode = max(leftCurrentNode);
+				this.root = maxNode.root;
+				this.color = maxNode.color;
+				
+				leftCurrentNode.delete(maxNode.root);
+			}
 		}
-		
-		
-//		if (this.root.equals(node) && this.leftSubtree.equals(null) && this.rightSubtree.equals(null)) {
-//			nodeToDelete = this;
-//		}
-//		else if (this.leftSubtree.equals(null) && this.rightSubtree.equals(null)) {
-//			System.out.println("Node not found");
-//		}
-//		else if (this.leftSubtree.equals(null)) { // single child, right child
-//			nodeToDelete = this.rightSubtree;
-//		}
-//		else if (this.rightSubtree.equals(null)) {
-//			// single child, left child
-//			nodeToDelete = this.leftSubtree;
-//		}
-//		else if ((!this.leftSubtree.equals(null) && this.rightSubtree.equals(null))) {
-//			nodeToDelete = this.delete(node);
-//		}
-//		else {
-//			System.out.println("Something went wrong somewhere");
-//		}
-//		
-//		return nodeToDelete;
-		
-//		// 1. Search for the node to delete and see if it even exists
-//		BinaryTree<T> nodeToDelete = searchNode(node);
-//		
-//		if (nodeToDelete != null) { // Node to delete exists in the tree
-//			BinaryTree<T> parentNode = nodeParent(node);
-//			
-//			// Case 1: node is a leaf
-//			if (nodeToDelete.leftSubtree.equals(null) && nodeToDelete.rightSubtree.equals(null)) {
-//				// Un-adopt the node from the node's parent
-//				/*
-//				 * If node is in the left child, re-parent the left child to a null node.
-//				 * Vice versa
-//				 */
-//				if (parentNode.leftSubtree.root.equals(node)) {
-//					parentNode.leftSubtree = null;
-//				}
-//				else if (parentNode.rightSubtree.root.equals(node)) {
-//					parentNode.rightSubtree = null;
-//				}
-//				else {
-//					System.out.println("there's an issue with the parenting");
-//				}
-//			}
-//			// Case 2: node to delete has a single child
-//			// 2A: Child is on the left
-//			else if (!nodeToDelete.leftSubtree.equals(null) && nodeToDelete.rightSubtree.equals(null)) {
-//				
-//			}
-//		}
-		 
-//		// 2. Within the nodeToDelete's subtree, search within the left child's subtree for the max as long as it exists
-//		BinaryTree<T> nodeToReplaceWith = new BinaryTree<>();
-////		if (nodeToDelete.leftSubtree != null) {
-////			nodeToReplaceWith = max(nodeToDelete.leftSubtree);
-////			
-////			// 2A. Replace the node to delete with new node details (value, color)
-////			nodeToDelete.root = nodeToReplaceWith.root;
-////			nodeToDelete.color = nodeToReplaceWith.color;
-////		}
-//		
-//		/*
-//		 * 3. Re-point the max's parent to the max's left child
-//		 * (There is no right child. If there is, that means this is not the max.)
-//		 */
-//		BinaryTree<T> maxParent = new BinaryTree<>();
-//		
-//		
-//		if (nodeToDelete.leftSubtree != null) {
-//			nodeToReplaceWith = max(nodeToDelete.leftSubtree);
-//			maxParent = nodeParent(nodeToReplaceWith.root);
-//			
-//			// 2A. Replace the node to delete with new node details (value, color)
-//			nodeToDelete.root = nodeToReplaceWith.root;
-//			nodeToDelete.color = nodeToReplaceWith.color;
-//			
-//			if (maxParent != null) { // If this is not the root of the tree
-//				maxParent.rightSubtree = nodeToReplaceWith.leftSubtree;
-//			}
-//		}
-//		else {
-//			maxParent.rightSubtree = nodeToReplaceWith;
-//		}
+		else {
+			nodeToDelete = searchNode(node);
+			if (nodeToDelete != null) {
+				nodeToDelete.delete(node);
+			}
+			else {
+				System.out.println("error");
+			}
+		}
 	}
 	
+	// KEEP
 	public BinaryTree<T> max(BinaryTree<T> tree) {
 		BinaryTree<T> max = tree;
 		
@@ -210,7 +162,7 @@ public class BinaryTree<T extends Comparable<T>> {
 	public String treeToString(BinaryTree<T> t) {
 	    StringBuilder treeAsStringBuilder = new StringBuilder();
 	    
-	    if (t != null) {
+	    if (t != null && t.root != null) {
 	        BinaryTree<T> leftTree = t.leftChild();
 	        BinaryTree<T> rightTree = t.rightChild();
 	        
